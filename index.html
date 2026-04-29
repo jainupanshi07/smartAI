@@ -80,6 +80,51 @@
         .nav-links a { text-decoration: none; color: var(--text-dim); font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
         .nav-links a:hover { color: white; }
 
+        /* --- New Navbar Actions --- */
+        .nav-actions { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; margin-right: 1.5rem; }
+
+        .search-container { position: relative; width: 220px; }
+        .search-input { 
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); 
+            padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 50px; color: white; font-size: 0.85rem; outline: none; transition: 0.3s;
+        }
+        .search-input:focus { border-color: var(--primary-cyan); background: rgba(255,255,255,0.08); width: 280px; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
+
+        .dropdown-menu { 
+            position: absolute; top: calc(100% + 15px); right: 0; background: rgba(15, 15, 25, 0.95); 
+            backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 12px; 
+            width: 250px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1001;
+        }
+        .dropdown-menu.active { display: flex; animation: slideDown 0.3s ease; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .dropdown-item { 
+            padding: 0.8rem 1.25rem; color: var(--text-dim); text-decoration: none; font-size: 0.9rem; 
+            transition: 0.3s; cursor: pointer; display: flex; align-items: center; gap: 10px;
+        }
+        .dropdown-item:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        .bell-container { position: relative; cursor: pointer; }
+        .bell-badge { 
+            position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; 
+            font-size: 0.65rem; padding: 2px 5px; border-radius: 10px; font-weight: 800; border: 2px solid var(--bg-dark);
+        }
+
+        .profile-section { display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; }
+        .avatar { 
+            width: 32px; height: 32px; border-radius: 50%; background: var(--primary-cyan); 
+            color: #050508; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;
+        }
+        .profile-name { font-size: 0.9rem; color: white; font-weight: 500; }
+
+        .notification-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-time { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+        .notification-item.read { opacity: 0.6; }
+
+
         /* --- Hero Section --- */
         .hero { padding: 12rem 10% 8rem; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; justify-content: center; }
         .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; letter-spacing: -2px; }
@@ -198,6 +243,51 @@
             <li><a href="#features">Features</a></li>
             <li><a href="#innovation">Innovation</a></li>
         </ul>
+        
+        <div class="nav-actions">
+            <!-- Search -->
+            <div class="search-container">
+                <i data-lucide="search" class="search-icon" style="width: 16px; height: 16px;"></i>
+                <input type="text" class="search-input" id="nav-search" placeholder="Search topics, courses..." onfocus="showSearchDrop()" onblur="hideSearchDrop()">
+                <div id="search-dropdown" class="dropdown-menu">
+                    <div class="dropdown-item" onclick="selectSearch('Python Basics')">Python Basics</div>
+                    <div class="dropdown-item" onclick="selectSearch('Data Science')">Data Science</div>
+                    <div class="dropdown-item" onclick="selectSearch('Machine Learning')">Machine Learning</div>
+                    <div class="dropdown-item" onclick="selectSearch('Web Development')">Web Development</div>
+                    <div class="dropdown-item" onclick="selectSearch('AI Tools')">AI Tools</div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="bell-container" onclick="toggleDrop('notif-dropdown')">
+                <i data-lucide="bell" style="color: white; width: 20px; height: 20px;"></i>
+                <span class="bell-badge" id="notif-count">3</span>
+                <div id="notif-dropdown" class="dropdown-menu">
+                    <div class="dropdown-item notification-item" onclick="markRead(0, this)">
+                        <div><div>🎯 Your Smart Path is ready to explore!</div><div class="notification-time">2 min ago</div></div>
+                    </div>
+                    <div class="dropdown-item notification-item" onclick="markRead(1, this)">
+                        <div><div>📝 New quiz available: Python Basics</div><div class="notification-time">1 hour ago</div></div>
+                    </div>
+                    <div class="dropdown-item notification-item" onclick="markRead(2, this)">
+                        <div><div>🏆 You scored 90% on your last quiz!</div><div class="notification-time">3 hours ago</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div class="profile-section" onclick="toggleDrop('profile-dropdown')">
+                <div class="avatar">PS</div>
+                <span class="profile-name">Priya Sharma</span>
+                <div id="profile-dropdown" class="dropdown-menu">
+                    <div class="dropdown-item"><i data-lucide="user" style="width:16px"></i> My Profile</div>
+                    <div class="dropdown-item"><i data-lucide="bar-chart" style="width:16px"></i> My Progress</div>
+                    <div class="dropdown-item"><i data-lucide="settings" style="width:16px"></i> Settings</div>
+                    <div class="dropdown-item" style="color:#ef4444"><i data-lucide="log-out" style="width:16px"></i> Logout</div>
+                </div>
+            </div>
+        </div>
+
         <a href="#cta" class="btn btn-primary" style="padding: 0.7rem 1.8rem; font-size: 0.9rem;">Get Started</a>
     </nav>
 
@@ -725,6 +815,41 @@
         };
 
         window.scrollToSection = (id) => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+
+        // --- NAVBAR ENHANCEMENTS ---
+        window.showSearchDrop = () => document.getElementById('search-dropdown').classList.add('active');
+        window.hideSearchDrop = () => setTimeout(() => document.getElementById('search-dropdown').classList.remove('active'), 200);
+        window.selectSearch = (topic) => { document.getElementById('nav-search').value = topic; };
+
+        window.toggleDrop = (id) => {
+            const el = document.getElementById(id);
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('active'));
+            if (!isActive) el.classList.add('active');
+        };
+
+        window.notifStatus = [false, false, false];
+        window.markRead = (idx, el) => {
+            if (!window.notifStatus[idx]) {
+                window.notifStatus[idx] = true;
+                el.classList.add('read');
+                const count = window.notifStatus.filter(s => !s).length;
+                const badge = document.getElementById('notif-count');
+                if (count > 0) badge.innerText = count;
+                else badge.style.display = 'none';
+            }
+        };
+
+        // Close dropdowns on outside click
+        window.onclick = function(event) {
+            if (!event.target.closest('.bell-container') && !event.target.closest('.profile-section')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => {
+                    if (d.id !== 'search-dropdown') d.classList.remove('active');
+                });
+            }
+            // Close modal on click outside content
+            if (event.target == fModal) closeFeatureModal();
+        };
     </script>
 </body>
 </html>
