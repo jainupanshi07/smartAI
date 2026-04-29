@@ -228,6 +228,15 @@
         .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-cyan); }
         .stat-label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
 
+        /* --- CTA Section --- */
+        .cta-section { 
+            text-align: center; background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(161, 79, 255, 0.1)); 
+            border: 1px solid var(--glass-border); border-radius: 30px; margin: 5rem 10%; padding: 5rem 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .cta-section h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .cta-section p { color: var(--text-dim); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2.5rem; }
+
         /* --- Footer --- */
         footer { padding: 4rem 10%; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); }
     </style>
@@ -278,7 +287,7 @@
 
         </div>
 
-        <a href="#cta" class="btn btn-primary" style="padding: 0.7rem 1.8rem; font-size: 0.9rem;">Get Started</a>
+        <a href="javascript:void(0)" onclick="scrollToSection('cta')" class="btn btn-primary" style="padding: 0.7rem 1.8rem; font-size: 0.9rem;">Get Started</a>
     </nav>
 
     <header class="hero" id="home">
@@ -339,6 +348,15 @@
             <div class="feature-card" onclick="openFeature('pathing')"><div class="feature-icon"><i data-lucide="compass"></i></div><h3>Smart Pathing</h3><p>Dynamic curriculum that adapts to your speed.</p></div>
             <div class="feature-card" onclick="openFeature('quiz')"><div class="feature-icon"><i data-lucide="layers"></i></div><h3>Quiz Generator</h3><p>Instant gamified quizzes from any text.</p></div>
             <div class="feature-card" onclick="openFeature('analytics')"><div class="feature-icon"><i data-lucide="line-chart"></i></div><h3>Deep Analytics</h3><p>Visualize your brain's growth in 3D.</p></div>
+        </div>
+    </section>
+
+    <section id="cta" class="cta-section reveal">
+        <h2>Ready to Supercharge Your Learning?</h2>
+        <p>Join thousands of students using AI to master complex topics in half the time. Start your personalized learning journey today.</p>
+        <div style="display:flex; justify-content:center; gap: 1.5rem;">
+            <button class="btn btn-primary" onclick="scrollToSection('advanced')">Start Now — It's Free</button>
+            <button class="btn btn-outline" onclick="scrollToSection('features')">View Features</button>
         </div>
     </section>
 
