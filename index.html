@@ -223,10 +223,47 @@
         .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 2rem; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-cyan), var(--primary-purple)); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 16px; text-align: center; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-cyan); }
         .stat-label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
+
+        /* --- Innovation Section --- */
+        .innovation-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 2rem; margin-top: 3rem;
+        }
+        .innov-card {
+            background: var(--bg-card); border: 1px solid var(--glass-border); 
+            padding: 2.5rem; border-radius: 24px; transition: 0.4s; cursor: pointer;
+            display: flex; flex-direction: column; gap: 1.5rem;
+        }
+        .innov-card:hover { transform: translateY(-10px); border-color: var(--primary-cyan); box-shadow: var(--neon-glow); }
+        .innov-icon { font-size: 2.5rem; }
+
+        /* --- Quiz & UI Components --- */
+        .quiz-step { animation: fadeIn 0.4s ease; }
+        .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .badge-item { 
+            text-align: center; padding: 10px; border-radius: 12px; background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--glass-border); filter: grayscale(1); transition: 0.3s;
+        }
+        .badge-item.active { filter: grayscale(0); border-color: var(--primary-cyan); box-shadow: 0 0 10px rgba(0,242,254,0.2); }
+        .badge-item i { font-size: 1.5rem; margin-bottom: 5px; display: block; }
+        .badge-name { font-size: 0.7rem; color: var(--text-dim); }
+
+        .tab-nav { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
+        .tab-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 0.5rem 1rem; font-weight: 600; transition: 0.3s; }
+        .tab-btn.active { color: var(--primary-cyan); border-bottom: 2px solid var(--primary-cyan); }
+
+        .upload-area { 
+            border: 2px dashed var(--glass-border); border-radius: 16px; padding: 3rem; 
+            text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .upload-area:hover { border-color: var(--primary-cyan); background: rgba(0, 242, 254, 0.05); }
+
+        .leaderboard-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .leaderboard-table td, .leaderboard-table th { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .user-row { background: rgba(0, 242, 254, 0.1); color: var(--primary-cyan); border-radius: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- CTA Section --- */
         .cta-section { 
@@ -300,6 +337,41 @@
         </div>
     </header>
 
+    <!-- INNOVATION SECTION -->
+    <section id="innovation" class="reveal">
+        <h2 class="section-title">Future of <span>Learning</span></h2>
+        <div class="innovation-grid">
+            <div class="innov-card" onclick="openFeature('style-detect')">
+                <div class="innov-icon">🧠</div>
+                <div>
+                    <h4>Learning Style Detection</h4>
+                    <p style="color: var(--text-dim);">AI identifies your learning persona for personalized results.</p>
+                </div>
+            </div>
+            <div class="innov-card" onclick="openFeature('gamify')">
+                <div class="innov-icon">🏆</div>
+                <div>
+                    <h4>Gamified System</h4>
+                    <p style="color: var(--text-dim);">Earn XP, collect badges, and climb the leaderboard.</p>
+                </div>
+            </div>
+            <div class="innov-card" onclick="openFeature('scanner')">
+                <div class="innov-icon">📸</div>
+                <div>
+                    <h4>AI Homework Scanner</h4>
+                    <p style="color: var(--text-dim);">Scan any homework for instant step-by-step solutions.</p>
+                </div>
+            </div>
+            <div class="innov-card" onclick="openFeature('teacher')">
+                <div class="innov-icon">👩‍🏫</div>
+                <div>
+                    <h4>Teacher AI Assistant</h4>
+                    <p style="color: var(--text-dim);">Create papers and lesson plans in seconds.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- ADVANCED FEATURES SECTION -->
     <section id="advanced" class="reveal">
         <h2 class="section-title">AI Powered <span>Capabilities</span></h2>
@@ -368,50 +440,47 @@
     <script type="module">
         lucide.createIcons();
 
-        // --- AI API INTEGRATION (Gemini Powered - Optimized) ---
-        async function callClaude(prompt, systemPrompt = "You are an AI education expert.") {
+        // --- AI API INTEGRATION (Gemini Powered - Multi-modal) ---
+        async function callClaude(prompt, systemPrompt = "You are an AI education expert.", image = null) {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
             const apiUrl = import.meta.env.VITE_GEMINI_URL;
             
-            // Timeout after 15 seconds
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
 
             try {
+                const parts = [{ text: `SYSTEM: ${systemPrompt}\n\nUSER: ${prompt}` }];
+                if (image) {
+                    parts.push({
+                        inline_data: {
+                            mime_type: "image/jpeg",
+                            data: image.split(',')[1] // Strip prefix if exists
+                        }
+                    });
+                }
+
                 const response = await fetch(`${apiUrl}?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     signal: controller.signal,
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: `SYSTEM: ${systemPrompt}\n\nUSER: ${prompt}\n\nINSTRUCTION: Return ONLY the raw result, no conversation. If JSON is requested, return ONLY the JSON block.` }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            maxOutputTokens: 2048,
-                        }
+                        contents: [{ parts }],
+                        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
                     })
                 });
                 
                 clearTimeout(timeoutId);
                 const data = await response.json();
-                
                 if (data.candidates && data.candidates[0].content.parts[0].text) {
                     return data.candidates[0].content.parts[0].text;
                 } else if (data.error) {
-                    console.error("Gemini API Error:", data.error);
                     throw new Error(data.error.message);
-                } else {
-                    throw new Error("Invalid response format");
                 }
+                throw new Error("Empty response from AI");
             } catch (err) {
                 clearTimeout(timeoutId);
                 console.error("AI Error:", err);
-                if (err.name === 'AbortError') {
-                    alert("The AI is taking too long to respond. Please try a simpler request or fewer days.");
-                } else {
-                    alert("AI Connection Error: " + err.message);
-                }
+                alert("Something went wrong. Please try again.");
                 return null;
             }
         }
@@ -427,7 +496,37 @@
             fActionBtn.style.display = 'block';
             fActionBtn.disabled = false;
 
-            if (type === 'paths' || type === 'pathing') {
+            if (type === 'style-detect') {
+                fTitle.innerText = "Learning Style Detection";
+                window.styleAnswers = [];
+                renderStyleStep(0);
+                fActionBtn.style.display = 'none';
+            } else if (type === 'gamify') {
+                fTitle.innerText = "Gamified Learning System";
+                renderGamifyUI();
+                fActionBtn.style.display = 'none';
+            } else if (type === 'scanner') {
+                fTitle.innerText = "AI Homework Scanner";
+                fBody.innerHTML = `
+                    <div class="upload-area" onclick="document.getElementById('hw-file').click()">
+                        <i data-lucide="camera" style="width:48px; height:48px; margin-bottom:1rem; color:var(--primary-cyan)"></i>
+                        <p>Click to upload or drag your homework photo</p>
+                        <input type="file" id="hw-file" style="display:none" accept="image/*">
+                    </div>
+                    <div class="input-group" style="margin-top:1.5rem">
+                        <label>Subject</label>
+                        <select id="hw-subject" class="form-input">
+                            <option>Math</option><option>Physics</option><option>Chemistry</option><option>Biology</option>
+                        </select>
+                    </div>
+                `;
+                fActionBtn.innerText = "Scan & Solve";
+                fActionBtn.onclick = scanHomework;
+            } else if (type === 'teacher') {
+                fTitle.innerText = "Teacher AI Assistant";
+                renderTeacherUI('paper');
+                fActionBtn.style.display = 'none';
+            } else if (type === 'paths' || type === 'pathing') {
                 fTitle.innerText = "Personalized Paths / Smart Pathing";
                 fBody.innerHTML = `
                     <div class="input-group"><label>What is your learning goal?</label><input type="text" id="goal-input" class="form-input" placeholder="e.g. Data Scientist"></div>
@@ -820,6 +919,211 @@
                 }
             };
             rec.start();
+        };
+
+        // --- INNOVATION 1: STYLE DETECTION ---
+        const styleQuestions = [
+            { q: "When you learn something new, what helps most?", a: ["Watching videos or diagrams", "Listening to explanations", "Doing it hands-on with practice"] },
+            { q: "When you forget something, what do you do?", a: ["Try to picture it in your mind", "Talk it out loud to yourself", "Redo the exercise again"] },
+            { q: "What kind of study sessions work best?", a: ["Colorful mind maps and visuals", "Group discussions or audio explanations", "Projects and real experiments"] },
+            { q: "How do you prefer feedback?", a: ["Charts and visual progress reports", "Verbal explanation of mistakes", "Another chance to redo the task"] },
+            { q: "When solving a problem, you usually:", a: ["Draw or visualize the solution", "Talk through it step by step", "Jump in and try different approaches"] }
+        ];
+
+        function renderStyleStep(idx) {
+            const q = styleQuestions[idx];
+            const progress = (idx / styleQuestions.length) * 100;
+            fBody.innerHTML = `
+                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+                <div class="quiz-step">
+                    <h3 style="margin-bottom:1.5rem">${q.q}</h3>
+                    ${q.a.map((opt, i) => `<button class="quiz-option" onclick="handleStyleAns(${idx}, '${['A','B','C'][i]}')">${opt}</button>`).join('')}
+                </div>
+            `;
+        }
+
+        window.handleStyleAns = async (idx, choice) => {
+            window.styleAnswers.push(choice);
+            if (idx < styleQuestions.length - 1) {
+                renderStyleStep(idx + 1);
+            } else {
+                const counts = { A:0, B:0, C:0 };
+                window.styleAnswers.forEach(a => counts[a]++);
+                const style = counts.A >= counts.B && counts.A >= counts.C ? "Visual" : (counts.B >= counts.C ? "Auditory" : "Practical");
+                localStorage.setItem('learning_style', style);
+                
+                showLoading(`Analyzing your ${style} learning style...`);
+                const res = await callClaude(`Student learning style detected: ${style}. Their answers: ${window.styleAnswers.join(',')}. Give a detailed report with 8 points as requested.`);
+                if (res) {
+                    const colors = { Visual: 'purple', Auditory: 'green', Practical: 'orange' };
+                    fBody.innerHTML = `
+                        <div style="text-align:center; margin-bottom:2rem">
+                            <h2 style="color:var(--primary-cyan)">You are a <span style="color:${colors[style]}">${style}</span> Learner! 🎉</h2>
+                        </div>
+                        <div class="report-card">${res}</div>
+                        <button class="btn btn-primary" style="width:100%; margin-top:1.5rem" onclick="openFeature('style-detect')">Retake Quiz</button>
+                    `;
+                }
+            }
+        };
+
+        // --- INNOVATION 2: GAMIFY ---
+        function renderGamifyUI() {
+            const xp = parseInt(localStorage.getItem('user_xp') || '1250');
+            const streak = 3;
+            const level = Math.floor(xp / 250);
+            const levelName = ["Novice", "Learner", "Scholar", "Sage", "Expert", "Knowledge Seeker"][level] || "Master";
+            const badges = [
+                { id: 'first', icon: '🥇', name: 'First Quiz', earned: true },
+                { id: 'speed', icon: '⚡', name: 'Speed Learner', earned: true },
+                { id: 'perfect', icon: '🎯', name: 'Perfect Score', earned: true },
+                { id: 'book', icon: '📚', name: 'Bookworm', earned: true },
+                { id: 'daily', icon: '🔥', name: 'Daily Hero', earned: false }
+            ];
+
+            fBody.innerHTML = `
+                <div class="stat-grid" style="margin-bottom:2rem">
+                    <div class="stat-card"><div class="stat-value">${xp} XP</div><div class="stat-label">Points</div></div>
+                    <div class="stat-card"><div class="stat-value">${streak} 🔥</div><div class="stat-label">Streak</div></div>
+                    <div class="stat-card"><div class="stat-value">Lvl ${level}</div><div class="stat-label">${levelName}</div></div>
+                </div>
+                
+                <div class="report-card" style="margin-bottom:2rem">
+                    <h4>Daily Challenge</h4>
+                    <div id="daily-q-box" style="margin-top:1rem">
+                        <button class="btn btn-outline" style="width:100%" onclick="loadDailyChallenge()">Load Daily Challenge</button>
+                    </div>
+                </div>
+
+                <div class="report-card" style="margin-bottom:2rem">
+                    <h4>Leaderboard</h4>
+                    <table class="leaderboard-table">
+                        <tr><td>🥇 Arjun Mehta</td><td>3200 XP</td></tr>
+                        <tr class="user-row"><td>🥈 Priya Sharma</td><td>${xp} XP</td></tr>
+                        <tr><td>🥉 Rohan Singh</td><td>980 XP</td></tr>
+                        <tr><td>4. Sneha Patel</td><td>750 XP</td></tr>
+                        <tr><td>5. Amit Kumar</td><td>620 XP</td></tr>
+                    </table>
+                </div>
+
+                <div class="report-card">
+                    <h4>Badges Collection</h4>
+                    <div class="badge-grid">
+                        ${badges.map(b => `
+                            <div class="badge-item ${b.earned ? 'active' : ''}" title="${b.earned ? 'Earned!' : 'Locked'}">
+                                <i>${b.icon}</i><div class="badge-name">${b.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.loadDailyChallenge = async () => {
+            const box = document.getElementById('daily-q-box');
+            box.innerHTML = `<div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+            const res = await callClaude("Generate one interesting quiz question on a random school topic. Return JSON: {question, options, correct, funFact}");
+            if (res) {
+                try {
+                    const q = JSON.parse(res.match(/\{[\s\S]*\}/)[0]);
+                    box.innerHTML = `
+                        <p style="margin-bottom:1rem"><strong>Question:</strong> ${q.question}</p>
+                        ${q.options.map((o,i) => `<button class="btn btn-outline" style="width:100%; margin-bottom:0.5rem" onclick="ansDaily(${i}, ${q.correct}, '${q.funFact.replace(/'/g, "\\'")}')">${o}</button>`).join('')}
+                    `;
+                } catch(e) { box.innerHTML = "<p>Error loading challenge.</p>"; }
+            }
+        };
+
+        window.ansDaily = (idx, correct, fact) => {
+            const box = document.getElementById('daily-q-box');
+            if (idx === correct) {
+                const xp = parseInt(localStorage.getItem('user_xp') || '1250') + 50;
+                localStorage.setItem('user_xp', xp);
+                box.innerHTML = `<h3>🎉 Correct! +50 XP</h3><p style="margin-top:1rem">${fact}</p><button class="btn btn-primary" style="margin-top:1rem" onclick="renderGamifyUI()">Continue</button>`;
+            } else {
+                box.innerHTML = `<h3>❌ Not quite.</h3><p style="margin-top:1rem"><strong>Fun Fact:</strong> ${fact}</p><button class="btn btn-outline" style="margin-top:1rem" onclick="renderGamifyUI()">Try Tomorrow</button>`;
+            }
+        };
+
+        // --- INNOVATION 3: SCANNER ---
+        window.scanHomework = async () => {
+            const fileInput = document.getElementById('hw-file');
+            const subject = document.getElementById('hw-subject').value;
+            if (!fileInput.files[0]) { alert("Please select a file"); return; }
+
+            showLoading("🔍 Scanning your homework...");
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                const res = await callClaude(`Student uploaded homework in ${subject}. Identify questions, solve each with steps and explanations. Use simple language.`, "Teacher/Solver Mode", base64);
+                if (res) {
+                    fBody.innerHTML = `
+                        <div class="report-card">${res}</div>
+                        <div style="display:flex; gap:1rem; margin-top:1.5rem">
+                            <button class="btn btn-primary" style="flex:1" onclick="downloadSolution()">Download Solution</button>
+                            <button class="btn btn-outline" style="flex:1" onclick="openFeature('scanner')">Scan Another</button>
+                        </div>
+                    `;
+                }
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        };
+
+        window.downloadSolution = () => {
+            const text = fBody.innerText;
+            const blob = new Blob([text], {type:'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = 'Solution.txt'; a.click();
+        };
+
+        // --- INNOVATION 4: TEACHER ---
+        function renderTeacherUI(tab) {
+            fBody.innerHTML = `
+                <div class="tab-nav">
+                    <button class="tab-btn ${tab==='paper'?'active':''}" onclick="renderTeacherUI('paper')">Paper Gen</button>
+                    <button class="tab-btn ${tab==='lesson'?'active':''}" onclick="renderTeacherUI('lesson')">Lesson Plan</button>
+                    <button class="tab-btn ${tab==='insights'?'active':''}" onclick="renderTeacherUI('insights')">Insights</button>
+                </div>
+                <div id="teacher-content"></div>
+            `;
+            const content = document.getElementById('teacher-content');
+            if (tab === 'paper') {
+                content.innerHTML = `
+                    <div class="input-group"><label>Subject</label><input type="text" id="t-sub" class="form-input"></div>
+                    <div class="input-group"><label>Topic</label><input type="text" id="t-topic" class="form-input"></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
+                        <div class="input-group"><label>Grade</label><select id="t-grade" class="form-input">${[6,7,8,9,10,11,12].map(g=>`<option>${g}th</option>`)}</select></div>
+                        <div class="input-group"><label>Count</label><select id="t-count" class="form-input"><option>10</option><option>20</option></select></div>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%" onclick="genTeacherRes('paper')">Generate Question Paper</button>
+                `;
+            } else if (tab === 'lesson') {
+                content.innerHTML = `
+                    <div class="input-group"><label>Subject</label><input type="text" id="t-sub" class="form-input"></div>
+                    <div class="input-group"><label>Topic</label><input type="text" id="t-topic" class="form-input"></div>
+                    <div class="input-group"><label>Duration</label><select id="t-dur" class="form-input"><option>30</option><option>45</option><option>60</option></select></div>
+                    <button class="btn btn-primary" style="width:100%" onclick="genTeacherRes('lesson')">Generate Lesson Plan</button>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="input-group"><label>Student Scores (e.g. Priya-85, Arjun-92)</label><textarea id="t-scores" class="form-input"></textarea></div>
+                    <div class="input-group"><label>Observations</label><textarea id="t-obs" class="form-input"></textarea></div>
+                    <button class="btn btn-primary" style="width:100%" onclick="genTeacherRes('insights')">Generate Insights</button>
+                `;
+            }
+        }
+
+        window.genTeacherRes = async (type) => {
+            showLoading("AI Assistant is working...");
+            let prompt = "";
+            if (type === 'paper') prompt = `Create a question paper for ${document.getElementById('t-sub').value}, topic: ${document.getElementById('t-topic').value}, grade: ${document.getElementById('t-grade').value}. Count: ${document.getElementById('t-count').value}.`;
+            else if (type === 'lesson') prompt = `Create a lesson plan for ${document.getElementById('t-topic').value} in ${document.getElementById('t-sub').value}. Duration: ${document.getElementById('t-dur').value} mins.`;
+            else prompt = `Analyze student scores: ${document.getElementById('t-scores').value}. Observations: ${document.getElementById('t-obs').value}.`;
+            
+            const res = await callClaude(prompt, "Teacher Assistant Mode");
+            if (res) {
+                document.getElementById('teacher-content').innerHTML = `<div class="report-card">${res}</div><button class="btn btn-outline" style="width:100%; margin-top:1rem" onclick="renderTeacherUI('${type}')">Back</button>`;
+            }
         };
 
         window.scrollToSection = (id) => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
