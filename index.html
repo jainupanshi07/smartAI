@@ -337,6 +337,36 @@
         </div>
     </header>
 
+
+
+    <!-- UNIFIED FEATURE MODAL -->
+    <div id="feature-modal" class="feature-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i id="modal-icon" data-lucide="sparkles" style="color: var(--primary-cyan)"></i>
+                    <h3 id="modal-title">Feature Title</h3>
+                </div>
+                <button onclick="closeFeatureModal()" style="background: none; border: none; color: white; cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="btn btn-outline" onclick="closeFeatureModal()">Close</button>
+                <button id="modal-action-btn" class="btn btn-primary">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <section id="features" class="reveal">
+        <h2 class="section-title">Core <span>Features</span></h2>
+        <div class="features-grid">
+            <div class="feature-card" onclick="openFeature('solver')"><div class="feature-icon"><i data-lucide="message-square"></i></div><h3>AI Doubt Solver</h3><p>Understanding the 'why' behind every solution.</p></div>
+            <div class="feature-card" onclick="openFeature('pathing')"><div class="feature-icon"><i data-lucide="compass"></i></div><h3>Smart Pathing</h3><p>Dynamic curriculum that adapts to your speed.</p></div>
+            <div class="feature-card" onclick="openFeature('quiz')"><div class="feature-icon"><i data-lucide="layers"></i></div><h3>Quiz Generator</h3><p>Instant gamified quizzes from any text.</p></div>
+            <div class="feature-card" onclick="openFeature('analytics')"><div class="feature-icon"><i data-lucide="line-chart"></i></div><h3>Deep Analytics</h3><p>Visualize your brain's growth in 3D.</p></div>
+        </div>
+    </section>
+
     <!-- INNOVATION SECTION -->
     <section id="innovation" class="reveal">
         <h2 class="section-title">Future of <span>Learning</span></h2>
@@ -392,34 +422,6 @@
                 <i data-lucide="mic" style="color: var(--primary-cyan); width: 32px; height: 32px;"></i>
                 <div><h4>Voice Mode</h4><p style="color: var(--text-dim);">Talk to your tutor hands-free.</p></div>
             </div>
-        </div>
-    </section>
-
-    <!-- UNIFIED FEATURE MODAL -->
-    <div id="feature-modal" class="feature-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <i id="modal-icon" data-lucide="sparkles" style="color: var(--primary-cyan)"></i>
-                    <h3 id="modal-title">Feature Title</h3>
-                </div>
-                <button onclick="closeFeatureModal()" style="background: none; border: none; color: white; cursor: pointer;"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" id="modal-body"></div>
-            <div class="modal-footer" id="modal-footer">
-                <button class="btn btn-outline" onclick="closeFeatureModal()">Close</button>
-                <button id="modal-action-btn" class="btn btn-primary">Execute</button>
-            </div>
-        </div>
-    </div>
-
-    <section id="features" class="reveal">
-        <h2 class="section-title">Core <span>Features</span></h2>
-        <div class="features-grid">
-            <div class="feature-card" onclick="openFeature('solver')"><div class="feature-icon"><i data-lucide="message-square"></i></div><h3>AI Doubt Solver</h3><p>Understanding the 'why' behind every solution.</p></div>
-            <div class="feature-card" onclick="openFeature('pathing')"><div class="feature-icon"><i data-lucide="compass"></i></div><h3>Smart Pathing</h3><p>Dynamic curriculum that adapts to your speed.</p></div>
-            <div class="feature-card" onclick="openFeature('quiz')"><div class="feature-icon"><i data-lucide="layers"></i></div><h3>Quiz Generator</h3><p>Instant gamified quizzes from any text.</p></div>
-            <div class="feature-card" onclick="openFeature('analytics')"><div class="feature-icon"><i data-lucide="line-chart"></i></div><h3>Deep Analytics</h3><p>Visualize your brain's growth in 3D.</p></div>
         </div>
     </section>
 
