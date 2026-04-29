@@ -149,6 +149,13 @@
         .mic-btn.recording { animation: pulse 1.5s infinite; background: #ef4444; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
+        /* --- Typing Indicator --- */
+        .typing-indicator { display: flex; gap: 5px; justify-content: center; margin-top: 1rem; }
+        .dot { width: 8px; height: 8px; background: var(--primary-cyan); border-radius: 50%; animation: blink 1.4s infinite both; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
+
         /* --- Footer --- */
         footer { padding: 4rem 10%; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); }
     </style>
@@ -277,9 +284,9 @@
             if (type === 'paths') {
                 fTitle.innerText = "Personalized Paths";
                 fBody.innerHTML = `
-                    <div class="input-group"><label>What is your career goal?</label><input type="text" id="goal-input" class="form-input" placeholder="e.g. Data Scientist"></div>
-                    <div class="input-group"><label>Current skill level?</label><select id="level-input" class="form-input"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
-                    <div class="input-group"><label>Weekly study hours?</label><input type="number" id="hours-input" class="form-input" value="10"></div>
+                    <div class="input-group"><label>What is your career goal?</label><input type="text" id="goal-input" class="form-input" placeholder="e.g. Full Stack Developer, Data Scientist"></div>
+                    <div class="input-group"><label>Your current skill level</label><select id="level-input" class="form-input"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+                    <div class="input-group"><label>Hours available per week to study</label><input type="number" id="hours-input" class="form-input" placeholder="e.g. 10"></div>
                 `;
                 fActionBtn.innerText = "Generate My Path";
                 fActionBtn.onclick = generatePath;
@@ -338,7 +345,8 @@
             
             if (res) {
                 try {
-                    const data = JSON.parse(res.replace(/```json|```/g, ''));
+                    const cleanRes = res.replace(/```json|```/g, '').trim();
+                    const data = JSON.parse(cleanRes);
                     fBody.innerHTML = `
                         <h3 style="margin-bottom: 2rem; color: var(--primary-cyan)">Your ${goal} Roadmap</h3>
                         <div class="timeline">
