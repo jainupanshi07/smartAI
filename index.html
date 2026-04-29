@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons for Modern UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-dark: #050508;
@@ -156,6 +158,31 @@
         .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
 
+        /* --- New Functional Components --- */
+        .timeline { border-left: 2px solid var(--glass-border); margin-left: 1rem; padding-left: 2rem; position: relative; }
+        .timeline-day { margin-bottom: 2.5rem; position: relative; }
+        .timeline-day::before { content: ''; position: absolute; left: -2.65rem; top: 0.5rem; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-dark); border: 2px solid var(--primary-cyan); }
+        .diff-easy { border-left-color: #10b981; }
+        .diff-medium { border-left-color: #f59e0b; }
+        .diff-hard { border-left-color: #ef4444; }
+
+        .quiz-option { 
+            width: 100%; text-align: left; padding: 1.25rem; background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 1rem; 
+            cursor: pointer; transition: 0.3s; color: white;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.08); border-color: var(--primary-cyan); }
+        .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+        .quiz-option.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 2rem; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-cyan), var(--primary-purple)); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 2rem; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-cyan); }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
+
         /* --- Footer --- */
         footer { padding: 4rem 10%; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); }
     </style>
@@ -228,10 +255,10 @@
     <section id="features" class="reveal">
         <h2 class="section-title">Core <span>Features</span></h2>
         <div class="features-grid">
-            <div class="feature-card"><div class="feature-icon"><i data-lucide="message-square"></i></div><h3>AI Doubt Solver</h3><p>Understanding the 'why' behind every solution.</p></div>
-            <div class="feature-card"><div class="feature-icon"><i data-lucide="compass"></i></div><h3>Smart Pathing</h3><p>Dynamic curriculum that adapts to your speed.</p></div>
-            <div class="feature-card"><div class="feature-icon"><i data-lucide="layers"></i></div><h3>Quiz Generator</h3><p>Instant gamified quizzes from any text.</p></div>
-            <div class="feature-card"><div class="feature-icon"><i data-lucide="line-chart"></i></div><h3>Deep Analytics</h3><p>Visualize your brain's growth in 3D.</p></div>
+            <div class="feature-card" onclick="openFeature('solver')"><div class="feature-icon"><i data-lucide="message-square"></i></div><h3>AI Doubt Solver</h3><p>Understanding the 'why' behind every solution.</p></div>
+            <div class="feature-card" onclick="openFeature('pathing')"><div class="feature-icon"><i data-lucide="compass"></i></div><h3>Smart Pathing</h3><p>Dynamic curriculum that adapts to your speed.</p></div>
+            <div class="feature-card" onclick="openFeature('quiz')"><div class="feature-icon"><i data-lucide="layers"></i></div><h3>Quiz Generator</h3><p>Instant gamified quizzes from any text.</p></div>
+            <div class="feature-card" onclick="openFeature('analytics')"><div class="feature-icon"><i data-lucide="line-chart"></i></div><h3>Deep Analytics</h3><p>Visualize your brain's growth in 3D.</p></div>
         </div>
     </section>
 
@@ -281,15 +308,58 @@
         window.openFeature = function(type) {
             fModal.style.display = 'flex';
             fActionBtn.style.display = 'block';
-            if (type === 'paths') {
-                fTitle.innerText = "Personalized Paths";
+            fActionBtn.disabled = false;
+
+            if (type === 'paths' || type === 'pathing') {
+                fTitle.innerText = "Personalized Paths / Smart Pathing";
                 fBody.innerHTML = `
-                    <div class="input-group"><label>What is your career goal?</label><input type="text" id="goal-input" class="form-input" placeholder="e.g. Full Stack Developer, Data Scientist"></div>
-                    <div class="input-group"><label>Your current skill level</label><select id="level-input" class="form-input"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
-                    <div class="input-group"><label>Hours available per week to study</label><input type="number" id="hours-input" class="form-input" placeholder="e.g. 10"></div>
+                    <div class="input-group"><label>What is your learning goal?</label><input type="text" id="goal-input" class="form-input" placeholder="e.g. Data Scientist"></div>
+                    <div class="input-group"><label>Learning pace (1=Slow, 5=Fast)</label><input type="range" id="pace-input" min="1" max="5" value="3" class="form-input"></div>
+                    <div class="input-group"><label>Total days available</label><input type="number" id="days-input" class="form-input" value="30"></div>
+                    <div class="input-group"><label>Preferred style</label>
+                        <select id="style-input" class="form-input" multiple>
+                            <option value="Videos" selected>Videos</option>
+                            <option value="Reading">Reading</option>
+                            <option value="Practice">Practice</option>
+                            <option value="Projects">Projects</option>
+                        </select>
+                    </div>
                 `;
                 fActionBtn.innerText = "Generate My Path";
                 fActionBtn.onclick = generatePath;
+            } else if (type === 'solver') {
+                fTitle.innerText = "AI Doubt Solver";
+                fBody.innerHTML = `
+                    <div class="input-group"><label>What's confusing you?</label><textarea id="doubt-input" class="form-input" placeholder="Explain your doubt..."></textarea></div>
+                    <div class="input-group"><label>Subject</label>
+                        <select id="subject-input" class="form-input">
+                            <option>Math</option><option>Physics</option><option>Chemistry</option>
+                            <option>Biology</option><option>English</option><option>History</option>
+                            <option>Computer Science</option>
+                        </select>
+                    </div>
+                    <div class="input-group"><label>Explanation Mode</label>
+                        <select id="mode-input" class="form-input">
+                            <option value="Explain like I am 10">Explain like I am 10</option>
+                            <option value="Explain in detail" selected>Explain in detail</option>
+                        </select>
+                    </div>
+                `;
+                fActionBtn.innerText = "Solve It";
+                fActionBtn.onclick = solveDoubt;
+            } else if (type === 'quiz') {
+                fTitle.innerText = "Quiz Generator";
+                fBody.innerHTML = `
+                    <div class="input-group"><label>Paste text or enter topic</label><textarea id="quiz-topic" class="form-input" placeholder="Quantum Physics, World War II, etc."></textarea></div>
+                    <div class="input-group"><label>Questions</label><select id="quiz-count" class="form-input"><option>5</option><option>10</option><option>15</option></select></div>
+                    <div class="input-group"><label>Type</label><select id="quiz-type" class="form-input"><option>MCQ</option><option>True-False</option><option>Mixed</option></select></div>
+                    <div class="input-group"><label>Difficulty</label><select id="quiz-diff" class="form-input"><option>Easy</option><option>Medium</option><option>Hard</option><option>Mixed</option></select></div>
+                `;
+                fActionBtn.innerText = "Generate Quiz Now";
+                fActionBtn.onclick = generateQuiz;
+            } else if (type === 'analytics') {
+                fTitle.innerText = "Deep Analytics";
+                renderAnalyticsUI();
             } else if (type === 'notes') {
                 fTitle.innerText = "AI Study Notes";
                 fBody.innerHTML = `<div class="input-group"><label>Enter topic or content</label><textarea id="notes-input" class="form-input"></textarea></div><div id="notes-output"></div>`;
@@ -319,56 +389,264 @@
             lucide.createIcons();
         };
 
-        window.closeFeatureModal = () => { fModal.style.display = 'none'; window.speechSynthesis.cancel(); };
+        window.closeFeatureModal = () => { fModal.style.display = 'none'; window.speechSynthesis.cancel(); if (window.myChart) window.myChart.destroy(); };
 
-        // --- FEATURE 1: PATHS ---
-        async function generatePath() {
-            const goal = document.getElementById('goal-input').value;
-            const level = document.getElementById('level-input').value;
-            const hours = document.getElementById('hours-input').value;
-
-            if (!goal) { alert("Please enter a career goal"); return; }
-
+        function showLoading(text) {
             fBody.innerHTML = `
                 <div style="text-align:center; padding: 3rem;">
-                    <div class="typing-indicator" style="display:flex; justify-content:center; margin-bottom: 1rem;">
+                    <div class="typing-indicator">
                         <div class="dot"></div><div class="dot"></div><div class="dot"></div>
                     </div>
-                    <p class="status-text">Generating your roadmap...</p>
+                    <p class="status-text">${text}</p>
                 </div>
             `;
             fActionBtn.style.display = 'none';
+        }
 
-            const prompt = `Create a detailed week-by-week learning roadmap for someone who wants to become a ${goal}. Their skill level is ${level} and they can study ${hours} hours per week. Give at least 6 weeks with topic, resources, and weekly goal for each week. Return as a JSON array of objects with keys: week, topic, resources, goal.`;
+        // --- FEATURE 1: SOLVER ---
+        async function solveDoubt(rephrase = false) {
+            const doubt = document.getElementById('doubt-input')?.value || window.lastDoubt;
+            const subject = document.getElementById('subject-input')?.value || window.lastSubject;
+            const mode = document.getElementById('mode-input')?.value || window.lastMode;
             
-            const res = await callClaude(prompt, "You are a career coach. Return ONLY a valid JSON array.");
+            if (!doubt) return;
+            window.lastDoubt = doubt; window.lastSubject = subject; window.lastMode = mode;
+
+            showLoading(rephrase ? "Rephrasing explanation..." : "AI is thinking...");
             
+            const prompt = `You are an expert tutor. A student is confused about: ${doubt} in subject: ${subject}. Explain it in ${mode} style. Structure your answer as:
+            1. Simple one-line answer
+            2. Deep explanation with real-world example
+            3. Step by step breakdown
+            4. Common mistakes students make
+            5. One practice question to test understanding.
+            Return HTML sections.`;
+
+            const res = await callClaude(prompt);
             if (res) {
-                try {
-                    const cleanRes = res.replace(/```json|```/g, '').trim();
-                    const data = JSON.parse(cleanRes);
-                    fBody.innerHTML = `
-                        <h3 style="margin-bottom: 2rem; color: var(--primary-cyan)">Your ${goal} Roadmap</h3>
-                        <div class="timeline">
-                            ${data.map(i => `
-                                <div class="timeline-card">
-                                    <h4 style="color: var(--primary-cyan); margin-bottom: 0.5rem;">Week ${i.week}: ${i.topic}</h4>
-                                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Goal:</strong> ${i.goal}</p>
-                                    <p style="font-size: 0.85rem; color: var(--text-dim);"><strong>Resources:</strong> ${i.resources}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button class="btn btn-outline" style="width:100%; margin-top: 1rem;" onclick="openFeature('paths')">Back to Form</button>
-                    `;
-                } catch (e) {
-                    fBody.innerHTML = `<p>Error parsing roadmap. Please try again.</p><button class="btn btn-outline" onclick="openFeature('paths')">Back</button>`;
-                }
+                fBody.innerHTML = `
+                    <div class="report-card">${res}</div>
+                    <button class="btn btn-outline" style="width:100%; margin-top: 1rem;" onclick="solveDoubt(true)">I still don't get it — explain differently</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top: 1rem;" onclick="openFeature('solver')">Ask Another Doubt</button>
+                `;
             } else {
-                openFeature('paths');
+                fBody.innerHTML = "<p>Oops! Something went wrong. Try again.</p>";
+                fActionBtn.style.display = 'block';
             }
         }
 
-        // --- FEATURE 2: NOTES ---
+        // --- FEATURE 2: PATHS / PATHING ---
+        async function generatePath() {
+            const goal = document.getElementById('goal-input').value;
+            const pace = document.getElementById('pace-input').value;
+            const days = document.getElementById('days-input').value;
+            const styles = Array.from(document.getElementById('style-input').selectedOptions).map(o => o.value).join(', ');
+
+            if (!goal) { alert("Please enter a goal"); return; }
+
+            showLoading("Generating your adaptive curriculum...");
+
+            const prompt = `Build a complete adaptive curriculum for: ${goal}. Student learns at pace ${pace}/5, has ${days} days, and prefers: ${styles}. Return a day by day plan where early days are easier, gradually increase difficulty. Each day has Day number, Topic, Activity type, Duration, Difficulty (1-5), and one mini task. Every 7 days add a revision day. Last day is final project. Return as JSON array of objects: {day, topic, type, duration, difficulty, task}.`;
+            
+            const res = await callClaude(prompt, "Return ONLY valid JSON.");
+            if (res) {
+                try {
+                    const data = JSON.parse(res.replace(/```json|```/g, '').trim());
+                    renderCurriculum(data, goal);
+                } catch (e) {
+                    fBody.innerHTML = "<p>Error parsing curriculum. Please try again.</p>";
+                }
+            }
+        }
+
+        function renderCurriculum(data, goal) {
+            fBody.innerHTML = `
+                <h3 style="margin-bottom: 2rem; color: var(--primary-cyan)">${goal} Roadmap</h3>
+                <div class="timeline">
+                    ${data.map(d => `
+                        <div class="timeline-day timeline-card diff-${d.difficulty <= 2 ? 'easy' : d.difficulty <= 4 ? 'medium' : 'hard'}">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <h4 style="color: var(--primary-cyan)">Day ${d.day}: ${d.topic}</h4>
+                                    <p style="font-size:0.85rem; color:var(--text-dim)">${d.type} • ${d.duration} • Diff: ${d.difficulty}/5</p>
+                                </div>
+                                <input type="checkbox" onchange="saveProgress(${d.day}, this.checked)" ${localStorage.getItem('path_'+goal+'_'+d.day) === 'true' ? 'checked' : ''} style="width:20px; height:20px; accent-color:var(--primary-cyan)">
+                            </div>
+                            <p style="margin-top:0.5rem; font-size:0.9rem"><strong>Task:</strong> ${d.task}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="btn btn-outline" style="width:100%; margin-top: 1rem;" onclick="openFeature('pathing')">Reset</button>
+            `;
+        }
+
+        window.saveProgress = (day, checked) => {
+            const goal = document.getElementById('goal-input')?.value || "curriculum";
+            localStorage.setItem('path_'+goal+'_'+day, checked);
+        };
+
+        // --- FEATURE 3: QUIZ ---
+        window.quizData = [];
+        window.currentQ = 0;
+        window.score = 0;
+
+        async function generateQuiz() {
+            const topic = document.getElementById('quiz-topic').value;
+            const count = document.getElementById('quiz-count').value;
+            const type = document.getElementById('quiz-type').value;
+            const diff = document.getElementById('quiz-diff').value;
+
+            if (!topic) return;
+            showLoading("Crafting your personalized quiz...");
+
+            const prompt = `Generate ${count} ${type} quiz questions on: ${topic}. Difficulty: ${diff}. Return ONLY a JSON array of objects: {question, options, correct, explanation}. options is array of 4 strings. correct is the index (0-3).`;
+            
+            const res = await callClaude(prompt, "Return ONLY valid JSON.");
+            if (res) {
+                try {
+                    window.quizData = JSON.parse(res.replace(/```json|```/g, '').trim());
+                    window.currentQ = 0;
+                    window.score = 0;
+                    renderQuizStep();
+                } catch (e) {
+                    fBody.innerHTML = "<p>Error parsing quiz. Please try again.</p>";
+                }
+            }
+        }
+
+        function renderQuizStep() {
+            const q = window.quizData[window.currentQ];
+            const progress = ((window.currentQ) / window.quizData.length) * 100;
+            
+            fActionBtn.style.display = 'none';
+            fBody.innerHTML = `
+                <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                <h3 style="margin-bottom: 2rem;">${q.question}</h3>
+                <div id="quiz-options">
+                    ${q.options.map((opt, i) => `
+                        <button class="quiz-option" onclick="checkAnswer(${i})">${opt}</button>
+                    `).join('')}
+                </div>
+                <div id="quiz-feedback" style="margin-top:2rem; display:none" class="report-card"></div>
+            `;
+        }
+
+        window.checkAnswer = (idx) => {
+            const q = window.quizData[window.currentQ];
+            const btns = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            
+            btns.forEach(b => b.disabled = true);
+            btns[q.correct].classList.add('correct');
+            
+            if (idx === q.correct) {
+                window.score++;
+            } else {
+                btns[idx].classList.add('wrong');
+            }
+
+            feedback.style.display = 'block';
+            feedback.innerHTML = `<p><strong>Explanation:</strong> ${q.explanation}</p>
+            <button class="btn btn-primary" style="margin-top:1.5rem; width:100%" onclick="nextQuestion()">${window.currentQ < window.quizData.length - 1 ? 'Next Question' : 'Show Results'}</button>`;
+        };
+
+        window.nextQuestion = () => {
+            window.currentQ++;
+            if (window.currentQ < window.quizData.length) {
+                renderQuizStep();
+            } else {
+                showQuizResults();
+            }
+        };
+
+        function showQuizResults() {
+            const finalScore = Math.round((window.score / window.quizData.length) * 100);
+            const scores = JSON.parse(localStorage.getItem('quiz_scores') || '[]');
+            scores.push({ date: new Date().toLocaleDateString(), score: finalScore });
+            localStorage.setItem('quiz_scores', JSON.stringify(scores));
+
+            fBody.innerHTML = `
+                <div style="text-align:center">
+                    <h2 style="font-size:4rem">${finalScore >= 70 ? '🎉' : '📚'}</h2>
+                    <h3>Quiz Complete!</h3>
+                    <div class="grade-badge">${finalScore}%</div>
+                    <p style="color:var(--text-dim); margin-bottom:2rem">You scored ${window.score} out of ${window.quizData.length}</p>
+                    <div class="hero-btns" style="justify-content:center">
+                        <button class="btn btn-primary" onclick="openFeature('quiz')">New Quiz</button>
+                        <button class="btn btn-outline" onclick="openFeature('analytics')">View Analytics</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- FEATURE 4: ANALYTICS ---
+        function renderAnalyticsUI() {
+            const scores = JSON.parse(localStorage.getItem('quiz_scores') || '[]');
+            const last10 = scores.slice(-10);
+            const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b.score, 0) / scores.length) : 0;
+            const best = scores.length ? Math.max(...scores.map(s=>s.score)) : 0;
+
+            fActionBtn.style.display = 'none';
+            fBody.innerHTML = `
+                <canvas id="scoreChart" style="max-height:300px"></canvas>
+                <div class="stat-grid">
+                    <div class="stat-card"><div class="stat-value">${scores.length}</div><div class="stat-label">Total</div></div>
+                    <div class="stat-card"><div class="stat-value">${avg}%</div><div class="stat-label">Average</div></div>
+                    <div class="stat-card"><div class="stat-value">${best}%</div><div class="stat-label">Best</div></div>
+                </div>
+                <div class="input-group" style="margin-top:2rem">
+                    <label>Topics you studied this week</label>
+                    <textarea id="topics-input" class="form-input" placeholder="e.g. React hooks, Thermodynamics..."></textarea>
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="getAIAnalysis()">Get AI Analysis</button>
+            `;
+
+            setTimeout(() => {
+                const ctx = document.getElementById('scoreChart').getContext('2d');
+                if (window.myChart) window.myChart.destroy();
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: last10.map(s => s.date),
+                        datasets: [{
+                            label: 'Quiz Scores',
+                            data: last10.map(s => s.score),
+                            backgroundColor: 'rgba(0, 242, 254, 0.4)',
+                            borderColor: '#00f2fe',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { scales: { y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+                });
+            }, 100);
+        }
+
+        async function getAIAnalysis() {
+            const scores = localStorage.getItem('quiz_scores') || '[]';
+            const topics = document.getElementById('topics-input').value;
+            showLoading("Analyzing your learning patterns...");
+
+            const prompt = `You are a learning analyst. A student has these quiz scores: ${scores}. Topics studied: ${topics}. Give a detailed analysis with: 1. Summary, 2. Strengths/Weaknesses, 3. Patterns, 4. 3 Recommendations, 5. Predicted score, 6. Motivational message. Return HTML.`;
+            
+            const res = await callClaude(prompt);
+            if (res) {
+                fBody.innerHTML = `
+                    <div id="report-content" class="report-card">${res}</div>
+                    <button class="btn btn-primary" style="width:100%; margin-top:1rem" onclick="downloadReport()">Download My Report</button>
+                    <button class="btn btn-outline" style="width:100%; margin-top:1rem" onclick="openFeature('analytics')">Back</button>
+                `;
+            }
+        }
+
+        window.downloadReport = () => {
+            const text = document.getElementById('report-content').innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'EduAI_Report.txt'; a.click();
+        };
+
+        // --- OLD FEATURES (RETAINED) ---
         async function generateNotes() {
             const prompt = `Create study notes for: ${document.getElementById('notes-input').value}. Include Title, Key Concepts, Summary. Return HTML.`;
             fActionBtn.innerText = "Generating...";
@@ -379,7 +657,6 @@
             }
         }
 
-        // --- FEATURE 3: EVALUATION ---
         async function evaluateWork() {
             const prompt = `Grade this essay: ${document.getElementById('eval-input').value}. Return JSON: {grade, percentage, strengths[], weaknesses[], suggestions[], rewritten}.`;
             fActionBtn.innerText = "Evaluating...";
@@ -391,7 +668,6 @@
             }
         }
 
-        // --- FEATURE 4: VOICE ---
         window.startVoice = () => {
             const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             const status = document.getElementById('v-status');
