@@ -263,6 +263,70 @@
         .leaderboard-table td, .leaderboard-table th { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .user-row { background: rgba(0, 242, 254, 0.1); color: var(--primary-cyan); border-radius: 8px; }
 
+        /* --- Profile Modal --- */
+        .profile-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(20px);
+            display: none; justify-content: center; align-items: flex-start; z-index: 2000;
+            overflow-y: auto; padding: 2rem 0;
+        }
+        .profile-modal-content {
+            background: #0f0f1a; border: 1px solid var(--glass-border); 
+            width: 90%; max-width: 800px; border-radius: 30px; position: relative; 
+            animation: slideInDown 0.5s ease; padding-bottom: 3rem;
+        }
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .profile-close { position: absolute; top: 25px; right: 25px; cursor: pointer; color: white; z-index: 10; }
+        
+        .profile-header { text-align: center; padding: 4rem 2rem 2rem; background: linear-gradient(to bottom, rgba(0, 242, 254, 0.05), transparent); border-radius: 30px 30px 0 0; }
+        .profile-avatar-large {
+            width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+            display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; color: #0f0f1a;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4); border: 4px solid #0f0f1a;
+        }
+        .profile-tag { color: var(--primary-cyan); font-weight: 600; margin: 0.5rem 0; }
+        .profile-email { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .profile-section-card { padding: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .profile-section-title { color: var(--primary-cyan); font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .bio-card { background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 16px; line-height: 1.6; color: var(--text-dim); }
+        
+        .timeline-card { position: relative; padding-left: 20px; border-left: 2px solid var(--primary-cyan); margin-bottom: 1.5rem; }
+        .timeline-card::before { content: ''; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--primary-cyan); box-shadow: 0 0 10px var(--primary-cyan); }
+        
+        .skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .skill-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .skill-badge { padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+        .skill-academic { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .skill-tech { background: rgba(0, 242, 254, 0.1); color: var(--primary-cyan); border: 1px solid rgba(0, 242, 254, 0.2); }
+        
+        .interest-item { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; color: var(--text-dim); }
+        
+        .achievement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .achievement-card { 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px; font-size: 0.9rem; transition: 0.3s;
+        }
+        .achievement-card:hover { border-color: var(--primary-cyan); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); }
+        
+        .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .goal-card { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 20px; }
+        .goal-list { list-style: none; padding: 0; }
+        .goal-list li { margin-bottom: 0.8rem; font-size: 0.9rem; color: var(--text-dim); display: flex; align-items: flex-start; gap: 8px; }
+        
+        .edit-profile-btn { 
+            width: fit-content; margin: 3rem auto 0; padding: 1rem 2.5rem; border-radius: 50px; 
+            background: transparent; border: 1.5px solid var(--primary-cyan); color: var(--primary-cyan); 
+            font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+        }
+        .edit-profile-btn:hover { background: var(--primary-cyan); color: #0f0f1a; box-shadow: var(--neon-glow); }
+
+        .editable-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 0.8rem; border-radius: 8px; color: white; margin-bottom: 1rem; outline: none; }
+        .editable-input:focus { border-color: var(--primary-cyan); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- CTA Section --- */
@@ -321,7 +385,10 @@
                 </div>
             </div>
 
-
+            <!-- Profile Icon -->
+            <div class="profile-section" onclick="openFullProfile()">
+                <div class="avatar" style="background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple))">PS</div>
+            </div>
         </div>
 
         <a href="javascript:void(0)" onclick="scrollToSection('cta')" class="btn btn-primary" style="padding: 0.7rem 1.8rem; font-size: 0.9rem;">Get Started</a>
@@ -424,6 +491,136 @@
             </div>
         </div>
     </section>
+
+    <!-- PROFILE FULL MODAL -->
+    <div id="full-profile-modal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div class="profile-close" onclick="closeFullProfile()"><i data-lucide="x"></i></div>
+            
+            <div id="profile-display-view">
+                <div class="profile-header">
+                    <div class="profile-avatar-large">PS</div>
+                    <h1 id="disp-name">Priya Sharma</h1>
+                    <div class="profile-tag" id="disp-tag">🎓 Lifelong Learner | AI Enthusiast</div>
+                    <a href="mailto:priya.sharma@eduai.com" class="profile-email" id="disp-email">📧 priya.sharma@eduai.com</a>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Short Bio</div>
+                    <div class="bio-card" id="disp-bio">
+                        I am a passionate learner driven by curiosity and a love for technology. I believe education is the most powerful tool to shape the future. Currently exploring AI, Data Science, and building solutions that make learning smarter for everyone.
+                    </div>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Education</div>
+                    <div class="timeline-card">
+                        <h4 id="disp-school">Delhi Public School, Bhopal</h4>
+                        <p style="color:var(--text-dim)">Stream: Science (PCM + Computer Science)</p>
+                        <p style="font-size:0.8rem">2023 - 2025</p>
+                    </div>
+                    <div class="timeline-card">
+                        <h4 id="disp-college">Pursuing B.Tech — AI & Data Science</h4>
+                        <p style="color:var(--text-dim)">2025 - Present</p>
+                    </div>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Skills</div>
+                    <div class="skill-grid">
+                        <div>
+                            <p style="margin-bottom:1rem; font-size:0.8rem; color:var(--text-dim)">Academic Skills</p>
+                            <div class="skill-list" id="disp-acad-skills">
+                                <span class="skill-badge skill-academic">Mathematics</span>
+                                <span class="skill-badge skill-academic">Physics</span>
+                                <span class="skill-badge skill-academic">Data Analysis</span>
+                                <span class="skill-badge skill-academic">Critical Thinking</span>
+                                <span class="skill-badge skill-academic">Problem Solving</span>
+                                <span class="skill-badge skill-academic">Research</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p style="margin-bottom:1rem; font-size:0.8rem; color:var(--text-dim)">Technical Skills</p>
+                            <div class="skill-list" id="disp-tech-skills">
+                                <span class="skill-badge skill-tech">Python</span>
+                                <span class="skill-badge skill-tech">React.js</span>
+                                <span class="skill-badge skill-tech">Machine Learning</span>
+                                <span class="skill-badge skill-tech">HTML & CSS</span>
+                                <span class="skill-badge skill-tech">Git & GitHub</span>
+                                <span class="skill-badge skill-tech">Claude AI API</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Interests</div>
+                    <div id="disp-interests">
+                        <div class="interest-item">🤖 Artificial Intelligence & Machine Learning</div>
+                        <div class="interest-item">📚 Reading Tech Blogs and Research Papers</div>
+                        <div class="interest-item">🎯 Competitive Programming</div>
+                        <div class="interest-item">🎨 UI/UX Design</div>
+                        <div class="interest-item">🧩 Solving Logic Puzzles</div>
+                        <div class="interest-item">🎵 Music while Studying</div>
+                    </div>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Achievements</div>
+                    <div class="achievement-grid" id="disp-achievements">
+                        <div class="achievement-card">🏆 1st Place — Smart India Hackathon 2024</div>
+                        <div class="achievement-card">📜 Google Python Certification — Coursera</div>
+                        <div class="achievement-card">🥈 2nd Place — District Science Olympiad</div>
+                        <div class="achievement-card">📜 Introduction to AI — IBM SkillsBuild</div>
+                        <div class="achievement-card">⭐ Top 5% — LeetCode Problem Solving</div>
+                        <div class="achievement-card">📜 Web Development Bootcamp — Udemy</div>
+                    </div>
+                </div>
+
+                <div class="profile-section-card">
+                    <div class="profile-section-title">Goals</div>
+                    <div class="goal-grid">
+                        <div class="goal-card">
+                            <p style="color:var(--primary-cyan); font-weight:700; margin-bottom:1rem">Short Term 🎯</p>
+                            <ul class="goal-list" id="disp-goals-short">
+                                <li>Master Python and Data Structures</li>
+                                <li>Build 3 AI-powered projects</li>
+                                <li>Contribute to Open Source</li>
+                                <li>Score 90%+ in all subjects</li>
+                            </ul>
+                        </div>
+                        <div class="goal-card">
+                            <p style="color:var(--primary-purple); font-weight:700; margin-bottom:1rem">Long Term 🚀</p>
+                            <ul class="goal-list" id="disp-goals-long">
+                                <li>Become an AI Research Scientist</li>
+                                <li>Build an EdTech startup</li>
+                                <li>Publish a research paper on AI in Education</li>
+                                <li>Work at Google or OpenAI</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="edit-profile-btn" onclick="toggleProfileEdit(true)">✏️ Edit Profile</button>
+            </div>
+
+            <!-- Edit View (Hidden by default) -->
+            <div id="profile-edit-view" style="display:none; padding: 4rem 2rem;">
+                <h2 class="profile-section-title">Edit Your Profile</h2>
+                <div class="input-group"><label>Full Name</label><input type="text" id="edit-name" class="editable-input"></div>
+                <div class="input-group"><label>Tagline</label><input type="text" id="edit-tag" class="editable-input"></div>
+                <div class="input-group"><label>Email</label><input type="email" id="edit-email" class="editable-input"></div>
+                <div class="input-group"><label>Bio</label><textarea id="edit-bio" class="editable-input" style="height:100px"></textarea></div>
+                <div class="input-group"><label>School</label><input type="text" id="edit-school" class="editable-input"></div>
+                <div class="input-group"><label>College/Higher Ed</label><input type="text" id="edit-college" class="editable-input"></div>
+                
+                <div style="display:flex; gap:1.5rem; margin-top:2rem">
+                    <button class="btn btn-primary" style="flex:1" onclick="saveProfile()">Save Changes</button>
+                    <button class="btn btn-outline" style="flex:1" onclick="toggleProfileEdit(false)">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <section id="cta" class="cta-section reveal">
         <h2>Ready to Supercharge Your Learning?</h2>
@@ -1127,6 +1324,53 @@
                 document.getElementById('teacher-content').innerHTML = `<div class="report-card">${res}</div><button class="btn btn-outline" style="width:100%; margin-top:1rem" onclick="renderTeacherUI('${type}')">Back</button>`;
             }
         };
+
+        // --- FULL PROFILE SYSTEM ---
+        const pModal = document.getElementById('full-profile-modal');
+        window.openFullProfile = () => { pModal.style.display = 'flex'; loadProfileData(); };
+        window.closeFullProfile = () => { pModal.style.display = 'none'; toggleProfileEdit(false); };
+
+        window.toggleProfileEdit = (isEdit) => {
+            document.getElementById('profile-display-view').style.display = isEdit ? 'none' : 'block';
+            document.getElementById('profile-edit-view').style.display = isEdit ? 'block' : 'none';
+            if (isEdit) {
+                document.getElementById('edit-name').value = document.getElementById('disp-name').innerText;
+                document.getElementById('edit-tag').value = document.getElementById('disp-tag').innerText;
+                document.getElementById('edit-email').value = document.getElementById('disp-email').innerText.replace('📧 ', '');
+                document.getElementById('edit-bio').value = document.getElementById('disp-bio').innerText;
+                document.getElementById('edit-school').value = document.getElementById('disp-school').innerText;
+                document.getElementById('edit-college').value = document.getElementById('disp-college').innerText;
+            }
+        };
+
+        window.saveProfile = () => {
+            const data = {
+                name: document.getElementById('edit-name').value,
+                tag: document.getElementById('edit-tag').value,
+                email: document.getElementById('edit-email').value,
+                bio: document.getElementById('edit-bio').value,
+                school: document.getElementById('edit-school').value,
+                college: document.getElementById('edit-college').value
+            };
+            localStorage.setItem('user_profile', JSON.stringify(data));
+            loadProfileData();
+            toggleProfileEdit(false);
+        };
+
+        function loadProfileData() {
+            const saved = localStorage.getItem('user_profile');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('disp-name').innerText = data.name;
+                document.getElementById('disp-tag').innerText = data.tag;
+                document.getElementById('disp-email').innerText = '📧 ' + data.email;
+                document.getElementById('disp-email').href = 'mailto:' + data.email;
+                document.getElementById('disp-bio').innerText = data.bio;
+                document.getElementById('disp-school').innerText = data.school;
+                document.getElementById('disp-college').innerText = data.college;
+                document.querySelector('.profile-name').innerText = data.name;
+            }
+        }
 
         window.scrollToSection = (id) => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 
